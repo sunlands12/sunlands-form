@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>СЕНЛЕНДС — Анкета клиента</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sky: #E8F4FD;
+    --ocean: #1A6B9A;
+    --ocean-dark: #0D4F73;
+    --sand: #F7F3EE;
+    --sand-dark: #E8E0D4;
+    --text: #1C1C1C;
+    --text-muted: #6B6B6B;
+    --white: #FFFFFF;
+    --accent: #E8A020;
+    --accent-glow: #FFD07A;
+    --accent-light: #FDF0E4;
+    --error: #C0392B;
+    --success: #1A6B5A;
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--sand);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  header {
+    background: var(--ocean-dark);
+    color: var(--white);
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+  }
+
+  header .logo-sun { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+  header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 0.75rem;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  header p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .progress-bar-wrap {
+    background: var(--ocean);
+    padding: 0.75rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .progress-track {
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    white-space: nowrap;
+  }
+
+  .progress-bg {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .form-wrap {
+    max-width: 640px;
+    margin: 2rem auto 4rem;
+    padding: 0 1rem;
+  }
+
+  .section-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.75rem 1.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--sand-dark);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--ocean-dark);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--sand-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--sky);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .field { margin-bottom: 1.1rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+
+  label .req { color: var(--accent); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="tel"],
+  input[type="email"],
+  input[type="date"],
+  input[type="number"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid var(--sand-dark);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--ocean);
+    box-shadow: 0 0 0 3px rgba(26,107,154,0.12);
+  }
+
+  input.error, select.error, textarea.error {
+    border-color: var(--error);
+  }
+
+  .error-msg {
+    font-size: 12px;
+    color: var(--error);
+    margin-top: 4px;
+    display: none;
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 480px) { .two-col { grid-template-columns: 1fr; } }
+
+  .hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  .chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .chip input { display: none; }
+
+  .chip label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    border: 1.5px solid var(--sand-dark);
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text-muted);
+    background: var(--white);
+    margin: 0;
+    user-select: none;
+  }
+
+  .chip input:checked + label {
+    border-color: var(--ocean);
+    background: var(--sky);
+    color: var(--ocean-dark);
+    font-weight: 500;
+  }
+
+  .chip label:hover { border-color: var(--ocean); color: var(--ocean); }
+
+  .shore-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .shore-item input { display: none; }
+
+  .shore-item label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--sand-dark);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text);
+    background: var(--white);
+    margin: 0;
+    user-select: none;
+  }
+
+  .shore-item input:checked + label {
+    border-color: var(--ocean);
+    background: var(--sky);
+    color: var(--ocean-dark);
+  }
+
+  .shore-item label:hover { border-color: var(--ocean); }
+
+  .shore-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--sand-dark);
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .shore-item input:checked + label .shore-dot {
+    background: var(--ocean);
+    border-color: var(--ocean);
+  }
+
+  .children-toggle { margin-bottom: 12px; }
+
+  #children-ages { display: none; }
+
+  .budget-display {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--ocean-dark);
+    margin-bottom: 8px;
+    font-family: 'Playfair Display', serif;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--sand-dark);
+    border-radius: 99px;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--ocean);
+    cursor: pointer;
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 1.5px var(--ocean);
+  }
+
+  input[type="range"]:focus { box-shadow: none; border: none; }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  .submit-wrap { margin-top: 2rem; text-align: center; }
+
+  button[type="submit"] {
+    background: var(--ocean-dark);
+    color: var(--white);
+    border: none;
+    padding: 14px 48px;
+    border-radius: 99px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+
+  button[type="submit"]:hover { background: var(--ocean); }
+  button[type="submit"]:active { transform: scale(0.98); }
+
+  .consent-block {
+    background: var(--sand);
+    border: 1.5px solid var(--sand-dark);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .consent-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .consent-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin-top: 2px;
+    accent-color: var(--ocean);
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 0;
+    border: 1.5px solid var(--sand-dark);
+  }
+
+  .consent-row label {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    cursor: pointer;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .consent-row label a {
+    color: var(--ocean);
+    text-decoration: underline;
+  }
+
+  .consent-error {
+    font-size: 12px;
+    color: var(--error);
+    margin-top: 8px;
+    display: none;
+  }
+
+  .submit-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--sand-dark);
+  }
+
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    background: #E6F5F0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 24px;
+  }
+
+  .success-screen h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--ocean-dark);
+    margin-bottom: 0.75rem;
+  }
+
+  .success-screen p { font-size: 14px; color: var(--text-muted); }
+
+  select option { color: var(--text); }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Туристическое агентство</p>
+  <h1>СЕНЛЕНДС</h1>
+  <p style="font-size:13px;color:rgba(255,255,255,0.45);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Подбор тура мечты</p>
+  <p>Заполните анкету — и мы свяжемся с вами в течение часа с готовыми предложениями</p>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-track">
+    <span class="progress-label" id="progress-label">Шаг 1 из 4</span>
+    <div class="progress-bg"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+</div>
+
+<div class="form-wrap">
+  <form id="tourForm" novalidate>
+
+    <!-- Контакты -->
+    <div class="section-card">
+      <div class="section-title">
+        <span class="section-icon">👤</span>
+        Контактные данные
+      </div>
+
+      <div class="field">
+        <label>ФИО <span class="req">*</span></label>
+        <input type="text" name="fio" placeholder="Иванов Иван Иванович" required>
+        <div class="error-msg">Пожалуйста, введите ФИО</div>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label>Телефон <span class="req">*</span></label>
+          <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
+          <div class="error-msg">Введите номер телефона</div>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="example@mail.ru">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Как вам удобнее общаться? <span class="req">*</span></label>
+        <div class="chip-group" id="contact-chips">
+          <div class="chip"><input type="radio" name="contact" id="c-wa" value="WhatsApp" required><label for="c-wa">WhatsApp</label></div>
+          <div class="chip"><input type="radio" name="contact" id="c-tg" value="Telegram"><label for="c-tg">Telegram</label></div>
+          <div class="chip"><input type="radio" name="contact" id="c-call" value="Звонок"><label for="c-call">Звонок</label></div>
+          <div class="chip"><input type="radio" name="contact" id="c-vk" value="ВКонтакте"><label for="c-vk">ВКонтакте</label></div>
+        </div>
+        <div class="error-msg" id="contact-error">Выберите способ связи</div>
+      </div>
+    </div>
+
+    <!-- О туре -->
+    <div class="section-card">
+      <div class="section-title">
+        <span class="section-icon">✈️</span>
+        О туре
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label>Дата вылета</label>
+          <input type="date" name="departure_date">
+        </div>
+        <div class="field">
+          <label>Количество дней</label>
+          <input type="number" name="days" placeholder="7" min="1" max="60">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Город вылета</label>
+        <input type="text" name="city_from" placeholder="Уфа">
+      </div>
+
+      <div class="field">
+        <label>Куда планируете поехать?</label>
+        <input type="text" name="destination" placeholder="Турция, Греция, или пока не знаю...">
+        <div class="hint">Если не определились — напишите примерное направление или пожелание</div>
+      </div>
+    </div>
+
+    <!-- Туристы -->
+    <div class="section-card">
+      <div class="section-title">
+        <span class="section-icon">👨‍👩‍👧</span>
+        Туристы
+      </div>
+
+      <div class="field">
+        <label>Сколько человек едет?</label>
+        <div class="chip-group">
+          <div class="chip"><input type="radio" name="people" id="p1" value="1"><label for="p1">1</label></div>
+          <div class="chip"><input type="radio" name="people" id="p2" value="2"><label for="p2">2</label></div>
+          <div class="chip"><input type="radio" name="people" id="p3" value="3"><label for="p3">3</label></div>
+          <div class="chip"><input type="radio" name="people" id="p4" value="4"><label for="p4">4</label></div>
+          <div class="chip"><input type="radio" name="people" id="p5" value="5+"><label for="p5">5+</label></div>
+        </div>
+      </div>
+
+      <div class="field children-toggle">
+        <label>Есть дети?</label>
+        <div class="chip-group">
+          <div class="chip"><input type="radio" name="children" id="ch-yes" value="yes"><label for="ch-yes">Да</label></div>
+          <div class="chip"><input type="radio" name="children" id="ch-no" value="no"><label for="ch-no">Нет</label></div>
+        </div>
+      </div>
+
+      <div class="field" id="children-ages">
+        <label>Возраст детей</label>
+        <input type="text" name="children_ages" placeholder="Например: 3 года, 7 лет">
+      </div>
+    </div>
+
+    <!-- Отель -->
+    <div class="section-card">
+      <div class="section-title">
+        <span class="section-icon">🏨</span>
+        Отель и питание
+      </div>
+
+      <div class="field">
+        <label>Питание</label>
+        <div class="chip-group">
+          <div class="chip"><input type="radio" name="meal" id="m1" value="Завтрак"><label for="m1">Завтрак</label></div>
+          <div class="chip"><input type="radio" name="meal" id="m2" value="Завтрак + ужин"><label for="m2">Завтрак + ужин</label></div>
+          <div class="chip"><input type="radio" name="meal" id="m3" value="3-разовое"><label for="m3">3-разовое</label></div>
+          <div class="chip"><input type="radio" name="meal" id="m4" value="Всё включено"><label for="m4">Всё включено</label></div>
+          <div class="chip"><input type="radio" name="meal" id="m5" value="Ультра всё включено"><label for="m5">Ультра всё включено</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Линия берега (можно несколько)</label>
+        <div class="shore-group">
+          <div class="shore-item">
+            <input type="checkbox" name="shore" id="s1" value="1-я береговая">
+            <label for="s1"><span class="shore-dot"></span> 1-я береговая линия — у самого моря</label>
+          </div>
+          <div class="shore-item">
+            <input type="checkbox" name="shore" id="s2" value="2-я береговая">
+            <label for="s2"><span class="shore-dot"></span> 2-я береговая линия — 5–10 мин до пляжа</label>
+          </div>
+          <div class="shore-item">
+            <input type="checkbox" name="shore" id="s3" value="3-я береговая">
+            <label for="s3"><span class="shore-dot"></span> 3-я береговая линия — более 10 мин</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Бассейн / аквапарк</label>
+        <div class="chip-group">
+          <div class="chip"><input type="radio" name="pool" id="pool-yes" value="Нужен"><label for="pool-yes">Нужен</label></div>
+          <div class="chip"><input type="radio" name="pool" id="pool-no" value="Не нужен"><label for="pool-no">Не нужен</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Дополнительные услуги в отеле</label>
+        <div class="chip-group">
+          <div class="chip"><input type="checkbox" name="extras" id="e-spa" value="СПА"><label for="e-spa">СПА</label></div>
+          <div class="chip"><input type="checkbox" name="extras" id="e-kids" value="Детский клуб"><label for="e-kids">Детский клуб</label></div>
+          <div class="chip"><input type="checkbox" name="extras" id="e-sport" value="Спортзал"><label for="e-sport">Спортзал</label></div>
+          <div class="chip"><input type="checkbox" name="extras" id="e-beach" value="Пляжные полотенца"><label for="e-beach">Пляжные полотенца</label></div>
+          <div class="chip"><input type="checkbox" name="extras" id="e-wifi" value="Wi-Fi"><label for="e-wifi">Wi-Fi</label></div>
+          <div class="chip"><input type="checkbox" name="extras" id="e-ani" value="Анимация"><label for="e-ani">Анимация</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Пожелания -->
+    <div class="section-card">
+      <div class="section-title">
+        <span class="section-icon">🗺️</span>
+        Пожелания и бюджет
+      </div>
+
+      <div class="field">
+        <label>Нужны ли экскурсии?</label>
+        <div class="chip-group">
+          <div class="chip"><input type="radio" name="excursions" id="ex-yes" value="Да, интересно"><label for="ex-yes">Да, интересно</label></div>
+          <div class="chip"><input type="radio" name="excursions" id="ex-maybe" value="Может быть"><label for="ex-maybe">Может быть</label></div>
+          <div class="chip"><input type="radio" name="excursions" id="ex-no" value="Нет, только отдых"><label for="ex-no">Нет, только отдых</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Где уже отдыхали?</label>
+        <textarea name="previous_trips" placeholder="Например: Турция 2022, Греция 2023 — расскажите, что понравилось или нет"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Желаемый бюджет на человека</label>
+        <div class="budget-display" id="budget-display">до 100 000 ₽</div>
+        <input type="range" name="budget" id="budget-range" min="30000" max="500000" step="5000" value="100000">
+        <div class="range-labels"><span>30 000 ₽</span><span>500 000 ₽+</span></div>
+      </div>
+    </div>
+
+    <div class=consent-block>
+      <div class=consent-row>
+        <input type=checkbox id=consent name=consent required>
+        <label for=consent>
+          Я даю согласие на обработку моих персональных данных турагентством <strong>СЕНЛЕНДС</strong> в соответствии с Федеральным законом №152-ФЗ «О персональных данных». Данные используются исключительно для подбора и оформления тура и не передаются третьим лицам.
+        </label>
+      </div>
+      <div class=consent-error id=consent-error>Необходимо дать согласие на обработку персональных данных</div>
+    </div>
+
+    <div class=submit-wrap>
+      <button type="submit">Отправить анкету →</button>
+      <p class="submit-note">СЕНЛЕНДС свяжется с вами в течение часа в рабочее время</p>
+    </div>
+
+  </form>
+
+  <div class="success-screen" id="success">
+    <div class="success-icon">✓</div>
+    <h2>Анкета отправлена!</h2>
+    <p>Спасибо! Команда СЕНЛЕНДС получила ваши пожелания и свяжется с вами в ближайшее время с готовыми предложениями по туру.</p>
+  </div>
+</div>
+
+<script>
+  const budgetRange = document.getElementById('budget-range');
+  const budgetDisplay = document.getElementById('budget-display');
+
+  function formatBudget(val) {
+    const n = parseInt(val);
+    if (n >= 500000) return 'от 500 000 ₽';
+    return 'до ' + n.toLocaleString('ru-RU') + ' ₽';
+  }
+
+  budgetRange.addEventListener('input', () => {
+    budgetDisplay.textContent = formatBudget(budgetRange.value);
+  });
+
+  document.querySelectorAll('input[name="children"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('children-ages').style.display = r.value === 'yes' ? 'block' : 'none';
+    });
+  });
+
+  function updateProgress() {
+    const fields = ['fio', 'phone', 'contact', 'departure_date', 'days', 'destination', 'people', 'meal', 'budget'];
+    let filled = 0;
+    fields.forEach(name => {
+      const els = document.querySelectorAll(`[name="${name}"]`);
+      if (els.length === 0) return;
+      if (els[0].type === 'radio') {
+        if ([...els].some(e => e.checked)) filled++;
+      } else {
+        if (els[0].value.trim()) filled++;
+      }
+    });
+    const pct = Math.round((filled / fields.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    const step = pct < 30 ? '1' : pct < 60 ? '2' : pct < 85 ? '3' : '4';
+    document.getElementById('progress-label').textContent = `Шаг ${step} из 4`;
+  }
+
+  document.getElementById('tourForm').addEventListener('input', updateProgress);
+  document.getElementById('tourForm').addEventListener('change', updateProgress);
+
+  document.getElementById('tourForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let valid = true;
+
+    document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('input.error, select.error, textarea.error').forEach(el => el.classList.remove('error'));
+
+    const fio = document.querySelector('[name="fio"]');
+    if (!fio.value.trim()) {
+      fio.classList.add('error');
+      fio.nextElementSibling.style.display = 'block';
+      valid = false;
+    }
+
+    const phone = document.querySelector('[name="phone"]');
+    if (!phone.value.trim()) {
+      phone.classList.add('error');
+      phone.nextElementSibling.style.display = 'block';
+      valid = false;
+    }
+
+    const contactPicked = document.querySelector('input[name="contact"]:checked');
+    if (!contactPicked) {
+      document.getElementById('contact-error').style.display = 'block';
+      valid = false;
+    }
+
+    const consent = document.getElementById('consent');
+    if (!consent.checked) {
+      document.getElementById('consent-error').style.display = 'block';
+      consent.closest('.consent-block').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      valid = false;
+    }
+
+    if (!valid) {
+      const firstError = document.querySelector('.error, .error-msg[style*="block"]');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-label').textContent = 'Готово!';
+    document.getElementById('tourForm').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
